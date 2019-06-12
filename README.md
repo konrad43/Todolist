@@ -9,6 +9,7 @@ A todolist with simple API. It shows a list of tasks and enables to add, update 
 GET:
     Displays a todolist in JSON format from database
     :returns JSON object
+    
 POST:
     Adds a new task from request
     :returns new task id in JSON
@@ -21,6 +22,7 @@ GET:
 PATCH:
     updates data in database from request
     :returns 204
+    
 DELETE:
     deletes item from database
     :returns 204
