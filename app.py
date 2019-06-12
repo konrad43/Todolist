@@ -50,6 +50,64 @@ def todolist():
     abort(405)
 
 
+@app.route('/todolist/<int:id>', methods=('GET','PATCH', 'DELETE'))
+def update(id):
+    """Enables updating and deleting data
+
+    :param id: int
+
+    Methods
+    -------
+    GET:
+        :returns a task with a given id in JSON format
+
+    PATCH:
+        updates data in database from request
+        :returns 204
+    DELETE:
+        deletes item from database
+        :returns 204
+    """
+    try:
+        data = (
+            db_session.query(ToDo)
+                .filter(ToDo.id == id).one()
+        )
+    except NoResultFound:
+        return '', 404
+
+    if request.method == 'GET':
+        return jsonify(json_dict(data))
+
+    elif request.method == 'PATCH':
+        task = get_task_data(request)
+
+        if task['title']:
+            data.title = task['title']
+        if task['done']:
+            data.done = task['done']
+        if task['done_date']:
+            data.done_date = task['done_date']
+        if task['done_false']:
+            data.done = 0
+            data.done_date = None
+
+        db_session.add(data)
+        db_session.commit()
+        print('zmieniono obiekt: ',
+              'tytuł: ',data.title,'done:',data.done,
+              'done date: ', data.done_date,
+              'flag:', task['done_false'])
+        return '', 204
+
+    elif request.method == 'DELETE':
+        db_session.delete(data)
+        db_session.commit()
+        return '', 204
+
+    else:
+        abort(404)
+
 
 app.cli.add_command(init_db_command)
 
